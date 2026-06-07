@@ -211,6 +211,8 @@ int main(int argc, char *argv[])
     unsigned int outfile_start  = 0x0801;
     unsigned int outfile_end    = 0xFFFF;
 
+    unsigned int sid_speed      = 0xFFFFFFFF;
+
     if (argc == 1
         || strcmp(argv[argc-1], "-h") == 0
         || strcmp(argv[argc-1], "--help") == 0)
@@ -283,6 +285,13 @@ int main(int argc, char *argv[])
     printf("music_play_hi: 0x%02X\n", music_play_hi);
     printf("music_start: 0x%04X\n", music_start);
 
+    if (music_start < 0x1000)
+    {
+        fprintf(stderr, "[ERROR]: music_start below 0x1000: 0x%04X.\n", music_start);
+        fclose(infile);
+        exit(EXIT_FAILURE);
+    }
+
     C64_MEMORY[0x085C]     = music_init_lo;
     C64_MEMORY[0x085D]     = music_init_hi;
     C64_MEMORY[0x085F]     = music_init_lo;
@@ -291,6 +300,23 @@ int main(int argc, char *argv[])
     C64_MEMORY[0x0A4E]     = music_init_hi;
     C64_MEMORY[0x0D6F]     = music_play_lo;
     C64_MEMORY[0x0D70]     = music_play_hi;
+
+    fseek(infile, 0x12, SEEK_SET);
+
+    for (i = 0x18; i > 0; i-=0x08)
+    {
+        input_byte = fgetc(infile);
+        sid_speed = (sid_speed & (input_byte << i));
+    }
+
+    printf("sid_speed: 0x%08X\n", sid_speed);
+
+    if (sid_speed > 0)
+    {
+        fprintf(stderr, "[ERROR]: sid_speed not 0x00000000: 0x%08X.\n", sid_speed);
+        fclose(infile);
+        exit(EXIT_FAILURE);
+    }
 
     fseek(infile, 0x7E, SEEK_SET);
 
