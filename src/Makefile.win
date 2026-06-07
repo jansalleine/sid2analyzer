@@ -1,0 +1,27 @@
+.PHONY: clean
+
+CC?=x86_64-w64-mingw32-cc
+CFLAGS=-O3 -Wall -I'exomizer'
+
+OBJECTS=\
+	sid2analyzer.o \
+	exomizer/chunkpool.o \
+	exomizer/exomizer.o \
+	exomizer/match.o \
+	exomizer/optimal.o \
+	exomizer/output.o \
+	exomizer/radix.o \
+	exomizer/search.o \
+	exomizer/sfx64ne.o
+
+all: sid2analyzer.exe
+
+sid2analyzer.exe: $(OBJECTS)
+	$(CC) -o $@ $^ $(LIBS)
+	strip $@
+
+clean:
+	$(RM) exomizer/*.o
+	$(RM) sid2analyzer.o
+	$(RM) sid2analyzer.exe
+
