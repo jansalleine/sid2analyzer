@@ -1,6 +1,10 @@
 #!/bin/bash
 
+echo "Test Phase 0 – build sid2analyzer"
+echo "================================="
+
 (cd ../src && make clean && make && cp sid2analyzer ../test/ && make clean)
+if [ $? -ne 0 ]; then echo "Test Phase 0 failed." && exit 1; fi
 
 echo
 echo "Test Phase 1 – should succeed"
@@ -25,12 +29,14 @@ echo "Test Phase 2 – should fail with [ERROR]: music_start below 0x1000"
 echo "================================================================="
 ./sid2analyzer -o prgs/And_Now_for_Something_Different.prg sids/And_Now_for_Something_Different.sid
 if [ $? -ne 1 ]; then echo "Test Phase 2 failed." && exit 1; fi
+rm -f prgs/And_Now_for_Something_Different.prg
 
 echo
 echo "Test Phase 3 – should fail with [ERROR]: sid_speed not 0x00000000"
 echo "================================================================="
 ./sid2analyzer -o prgs/25_Hertz-0_Inspiration.prg sids/25_Hertz-0_Inspiration.sid
 if [ $? -ne 1 ]; then echo "Test Phase 3 failed." && exit 1; fi
+rm -f prgs/25_Hertz-0_Inspiration.prg
 
 rm -f sid2analyzer
 

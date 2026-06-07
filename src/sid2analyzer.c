@@ -225,7 +225,8 @@ int main(int argc, char *argv[])
     {
         if (strcmp(argv[i], "-o") == 0)
         {
-            strcpy(outfile_name, argv[++i]);
+            strncpy(outfile_name, argv[++i], sizeof(outfile_name) - 1);
+            outfile_name[sizeof(outfile_name) - 1] = '\0';
         }
 
         if (strcmp(argv[i], "-nc") == 0)
@@ -289,6 +290,7 @@ int main(int argc, char *argv[])
     {
         fprintf(stderr, "[ERROR]: music_start below 0x1000: 0x%04X.\n", music_start);
         fclose(infile);
+        fclose(outfile);
         exit(EXIT_FAILURE);
     }
 
@@ -315,6 +317,7 @@ int main(int argc, char *argv[])
     {
         fprintf(stderr, "[ERROR]: sid_speed not 0x00000000: 0x%08X.\n", sid_speed);
         fclose(infile);
+        fclose(outfile);
         exit(EXIT_FAILURE);
     }
 
