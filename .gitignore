@@ -1,4 +1,4 @@
-.o
+*.o
 test/prgs/*.prg
 test/sid2analyzer
 src/sid2analyzer
